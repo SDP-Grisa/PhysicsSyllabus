@@ -1,11 +1,13 @@
 """
 Embedding Generation and Vector Store Management
-ChromaDB-only implementation (FAISS removed for Kaggle compatibility)
+ChromaDB‑only implementation (FAISS removed for Kaggle compatibility)
 """
 
-import numpy as np
-from typing import List, Dict, Optional, Tuple
+import json
 from pathlib import Path
+from typing import List, Dict, Optional, Tuple
+
+import numpy as np
 from tqdm import tqdm
 
 # Embeddings
@@ -19,7 +21,7 @@ from schemas import ChunkMetadata
 from config import (
     EMBEDDING_CONFIG,
     VECTOR_STORE_CONFIG,
-    VECTOR_DB_DIR
+    VECTOR_DB_DIR,
 )
 
 
@@ -27,8 +29,9 @@ from config import (
 # Embedding Generator
 # ============================================================
 
+
 class EmbeddingGenerator:
-    """Generates embeddings using open-source models"""
+    """Generates embeddings using open‑source models"""
 
     def __init__(self, model_name: Optional[str] = None):
         self.model_name = model_name or EMBEDDING_CONFIG["model_name"]
@@ -42,13 +45,16 @@ class EmbeddingGenerator:
 
         print(f"Embedding dimension: {self.dimension}")
 
+    # --------------------------------------------------------
+
     def encode(
         self,
         texts: List[str],
         batch_size: Optional[int] = None,
-        show_progress: bool = True
+        show_progress: bool = True,
     ) -> np.ndarray:
         """Generate embeddings for list of texts"""
+
         batch_size = batch_size or EMBEDDING_CONFIG["batch_size"]
 
         embeddings = self.model.encode(
@@ -56,13 +62,15 @@ class EmbeddingGenerator:
             batch_size=batch_size,
             show_progress_bar=show_progress,
             normalize_embeddings=EMBEDDING_CONFIG["normalize_embeddings"],
-            convert_to_numpy=True
+            convert_to_numpy=True,
         )
 
         return embeddings
 
+    # --------------------------------------------------------
+
     def encode_single(self, text: str) -> np.ndarray:
-        """Encode single text"""
+        """Encode a single text string"""
         return self.encode([text], show_progress=False)[0]
 
 
@@ -70,8 +78,9 @@ class EmbeddingGenerator:
 # Base Vector Store
 # ============================================================
 
+
 class VectorStore:
-    """Base class for vector stores"""
+    """Abstract base class for vector stores"""
 
     def add(self, chunks: List[ChunkMetadata], embeddings: np.ndarray):
         raise NotImplementedError
@@ -80,7 +89,7 @@ class VectorStore:
         self,
         query_embedding: np.ndarray,
         top_k: int = 10,
-        filters: Optional[Dict] = None
+        filters: Optional[Dict] = None,
     ) -> List[Tuple[Dict, float]]:
         raise NotImplementedError
 
@@ -95,6 +104,7 @@ class VectorStore:
 # ChromaDB Store (ONLY STORE NOW)
 # ============================================================
 
+
 class ChromaDBStore(VectorStore):
     """ChromaDB vector store implementation"""
 
@@ -107,7 +117,7 @@ class ChromaDBStore(VectorStore):
             path=str(self.persist_directory),
             settings=Settings(
                 anonymized_telemetry=VECTOR_STORE_CONFIG["anonymized_telemetry"]
-            )
+            ),
         )
 
         # Get or create collection
@@ -117,7 +127,7 @@ class ChromaDBStore(VectorStore):
         except Exception:
             self.collection = self.client.create_collection(
                 name=self.collection_name,
-                metadata={"hnsw:space": VECTOR_STORE_CONFIG["distance_metric"]}
+                metadata={"hnsw:space": VECTOR_STORE_CONFIG["distance_metric"]},
             )
             print(f"Created new collection: {self.collection_name}")
 
@@ -125,6 +135,7 @@ class ChromaDBStore(VectorStore):
 
     def add(self, chunks: List[ChunkMetadata], embeddings: np.ndarray):
         """Add chunks to ChromaDB"""
+
         if len(chunks) != len(embeddings):
             raise ValueError("Number of chunks and embeddings must match")
 
@@ -142,7 +153,7 @@ class ChromaDBStore(VectorStore):
                 ids=ids[i:end_idx],
                 documents=documents[i:end_idx],
                 metadatas=metadatas[i:end_idx],
-                embeddings=embeddings_list[i:end_idx]
+                embeddings=embeddings_list[i:end_idx],
             )
 
         print(f"Added {len(chunks)} chunks to ChromaDB")
@@ -153,19 +164,19 @@ class ChromaDBStore(VectorStore):
         self,
         query_embedding: np.ndarray,
         top_k: int = 10,
-        filters: Optional[Dict] = None
+        filters: Optional[Dict] = None,
     ) -> List[Tuple[Dict, float]]:
         """Search for similar chunks"""
 
         results = self.collection.query(
             query_embeddings=[query_embedding.tolist()],
             n_results=top_k,
-            where=filters if filters else None
+            where=filters if filters else None,
         )
 
-        formatted_results = []
+        formatted_results: List[Tuple[Dict, float]] = []
 
-        if results and results["ids"]:
+        if results and results.get("ids"):
             for i in range(len(results["ids"][0])):
                 metadata = results["metadatas"][0][i]
                 metadata["text_content"] = results["documents"][0][i]
@@ -180,21 +191,24 @@ class ChromaDBStore(VectorStore):
     # --------------------------------------------------------
 
     def save(self):
-        """ChromaDB auto-persists"""
+        """ChromaDB auto‑persists"""
         print(f"ChromaDB persisted to: {self.persist_directory}")
 
     def load(self):
-        """ChromaDB auto-loads"""
+        """ChromaDB auto‑loads (nothing required)"""
         pass
+
+    # --------------------------------------------------------
 
     def get_collection_stats(self) -> Dict:
         """Get collection statistics"""
+
         count = self.collection.count()
 
         return {
             "collection_name": self.collection_name,
             "total_chunks": count,
-            "persist_directory": str(self.persist_directory)
+            "persist_directory": str(self.persist_directory),
         }
 
 
@@ -202,11 +216,15 @@ class ChromaDBStore(VectorStore):
 # Factory Function
 # ============================================================
 
-def create_vector_store() -> VectorStore:
+
+def create_vector_store(*args, **kwargs) -> VectorStore:
     """
-    Create ChromaDB vector store
-    (FAISS removed for simplicity & Kaggle compatibility)
+    Create ChromaDB vector store.
+
+    Accepts unused args/kwargs for backward compatibility
+    with older FAISS‑based calls.
     """
+
     return ChromaDBStore()
 
 
@@ -214,9 +232,8 @@ def create_vector_store() -> VectorStore:
 # Example Usage
 # ============================================================
 
-if __name__ == "__main__":
-    import json
 
+if __name__ == "__main__":
     # Load chunks
     with open("data/metadata/chunks.json", "r") as f:
         chunks_data = json.load(f)
@@ -246,5 +263,5 @@ if __name__ == "__main__":
     print(f"\nTest search for: '{query}'")
     for i, (metadata, score) in enumerate(results, 1):
         print(f"{i}. Score: {score:.3f}")
-        print(f"   Chapter: {metadata['chapter_name']}")
+        print(f"   Chapter: {metadata.get('chapter_name')}")
         print(f"   Text: {metadata['text_content'][:100]}...")
