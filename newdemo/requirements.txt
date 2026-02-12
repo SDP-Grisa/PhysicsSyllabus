@@ -1,69 +1,34 @@
-# # PDF Processing
-# pdfplumber==0.11.0
-# PyMuPDF==1.24.0
-# marker-pdf==0.2.15
-# layoutparser==0.3.4
-# Pillow==10.2.0
+# ---------------- PDF Processing ----------------
+pdfplumber>=0.11.0
+PyMuPDF>=1.24.0
+marker-pdf>=0.2.15
+layoutparser>=0.3.4
+Pillow>=10.2.0
 
-# # Vector Store & Embeddings
-# chromadb==0.4.22
-# sentence-transformers==2.3.1
-# faiss-cpu==1.7.4
+# ---------------- Vector Store & Embeddings ----------------
+chromadb>=0.4.24
+sentence-transformers>=2.6.0
 
-# # Retrieval & Reranking
-# rank-bm25==0.2.2
+# ---------------- Retrieval ----------------
+rank-bm25>=0.2.2
 
-# # LLM Integration
-# transformers==4.37.2
-# torch==2.2.0
-# accelerate==0.27.0
-# bitsandbytes==0.42.0
+# ---------------- LLM Stack (Py3.12 safe) ----------------
+transformers>=4.41.0
+accelerate>=0.30.0
+bitsandbytes>=0.43.0
+torch>=2.3.0
 
-# # UI
-# streamlit==1.31.0
-# streamlit-extras==0.3.6
+# ---------------- UI ----------------
+streamlit>=1.33.0
+streamlit-extras>=0.4.0
 
-# # Utilities
-# python-dotenv==1.0.1
-# tqdm==4.66.1
-# pandas==2.2.0
-# numpy==1.26.3
-# regex==2023.12.25
-# langchain==0.1.6
-# langchain-community==0.0.20
+# ---------------- Utilities ----------------
+python-dotenv>=1.0.1
+tqdm>=4.66.4
+pandas>=2.2.2
+numpy>=1.26.4
+regex>=2024.5.15
 
-# # Optional (for detectron2 layout detection)
-# # detectron2 @ git+https://github.com/facebookresearch/detectron2.git
-
-# PDF Processing
-pdfplumber==0.11.0
-PyMuPDF==1.24.0
-marker-pdf==0.2.15
-layoutparser==0.3.4
-Pillow==10.2.0
-
-# Vector Store & Embeddings
-chromadb==0.4.22
-sentence-transformers==2.3.1
-
-# Retrieval & Reranking
-rank-bm25==0.2.2
-
-# LLM Integration
-transformers==4.37.2
-torch==2.2.0
-accelerate==0.27.0
-bitsandbytes==0.42.0
-
-# UI
-streamlit==1.31.0
-streamlit-extras==0.3.6
-
-# Utilities
-python-dotenv==1.0.1
-tqdm==4.66.1
-pandas==2.2.0
-numpy==1.26.3
-regex==2023.12.25
-langchain==0.1.6
-langchain-community==0.0.20
+# ---------------- LangChain (latest Py3.12 safe) ----------------
+langchain>=0.2.0
+langchain-community>=0.2.0
