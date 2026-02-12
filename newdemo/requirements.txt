@@ -1,3 +1,40 @@
+# # PDF Processing
+# pdfplumber==0.11.0
+# PyMuPDF==1.24.0
+# marker-pdf==0.2.15
+# layoutparser==0.3.4
+# Pillow==10.2.0
+
+# # Vector Store & Embeddings
+# chromadb==0.4.22
+# sentence-transformers==2.3.1
+# faiss-cpu==1.7.4
+
+# # Retrieval & Reranking
+# rank-bm25==0.2.2
+
+# # LLM Integration
+# transformers==4.37.2
+# torch==2.2.0
+# accelerate==0.27.0
+# bitsandbytes==0.42.0
+
+# # UI
+# streamlit==1.31.0
+# streamlit-extras==0.3.6
+
+# # Utilities
+# python-dotenv==1.0.1
+# tqdm==4.66.1
+# pandas==2.2.0
+# numpy==1.26.3
+# regex==2023.12.25
+# langchain==0.1.6
+# langchain-community==0.0.20
+
+# # Optional (for detectron2 layout detection)
+# # detectron2 @ git+https://github.com/facebookresearch/detectron2.git
+
 # PDF Processing
 pdfplumber==0.11.0
 PyMuPDF==1.24.0
@@ -8,7 +45,6 @@ Pillow==10.2.0
 # Vector Store & Embeddings
 chromadb==0.4.22
 sentence-transformers==2.3.1
-faiss-cpu==1.7.4
 
 # Retrieval & Reranking
 rank-bm25==0.2.2
@@ -31,6 +67,3 @@ numpy==1.26.3
 regex==2023.12.25
 langchain==0.1.6
 langchain-community==0.0.20
-
-# Optional (for detectron2 layout detection)
-# detectron2 @ git+https://github.com/facebookresearch/detectron2.git
